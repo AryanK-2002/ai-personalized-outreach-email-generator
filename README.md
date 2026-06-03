@@ -1,6 +1,6 @@
 # AI Personalized Email Generator using n8n
 
-## Overview
+## Overview :
 
 This project is an AI-powered personalized outreach email generator built using n8n, OpenRouter/OpenAI & LinkedIn profile data. The workflow automates the process of researching a prospect and generating a customized cold email tailored to their professional background, experience, and interests.
 
@@ -8,7 +8,7 @@ The goal of the project is to reduce the time spent on manual prospect research 
 
 ---
 
-## Problem Statement
+## Problem Statement :
 
 Writing personalized cold emails at scale is a time-consuming process. Sales teams, recruiters, founders & business development professionals often spend significant effort researching prospects before drafting outreach messages.
 
@@ -21,7 +21,7 @@ This workflow automates that process by:
 
 ---
 
-## Features
+## Features :
 
 * Automated LinkedIn profile data extraction
 * AI-driven prospect analysis
@@ -34,23 +34,23 @@ This workflow automates that process by:
 
 ---
 
-## Tech Stack
+## Tech Stack :
 
 ### Workflow Automation
 
 * n8n
 
-### AI Model
+### AI Model :
 
 * OpenRouter
 * OpenAI GPT Models
 
-### Data Collection
+### Data Collection :
 
 * Apify
 * LinkedIn Profile Scraping
 
-### API Integration
+### API Integration :
 
 * HTTP Request Nodes
 * JSON Parsing
@@ -58,7 +58,7 @@ This workflow automates that process by:
 
 ---
 
-## Workflow Architecture
+## Workflow Architecture :
 
 ```text
 LinkedIn Profile URL
@@ -129,7 +129,7 @@ The workflow returns:
 
 ---
 
-## Example Use Cases
+## Example Use Cases :
 
 ### Sales Outreach
 
@@ -149,7 +149,7 @@ Scale partnership and networking outreach efforts.
 
 ---
 
-## Sample Output
+## Sample Output :
 
 ### Subject
 
@@ -174,7 +174,7 @@ Best regards,
 
 ---
 
-## Challenges Faced
+## Challenges Faced :
 
 During development, several challenges were encountered:
 
@@ -187,7 +187,7 @@ During development, several challenges were encountered:
 
 ---
 
-## Future Improvements
+## Future Improvements :
 
 Planned enhancements include:
 
@@ -204,7 +204,7 @@ Planned enhancements include:
 
 ---
 
-## Security Notice
+## Security Notice :
 
 All API credentials and authentication tokens have been removed from the public repository.
 
@@ -217,7 +217,7 @@ To run this workflow:
 
 ---
 
-## Repository Structure
+## Repository Structure :
 
 ```text
 personalized-email-generator-n8n/
