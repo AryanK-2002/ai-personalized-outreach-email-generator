@@ -215,26 +215,8 @@ To run this workflow:
 3. Configure the required credentials inside n8n
 4. Update node configurations if necessary
 
----
 
-## Repository Structure :
 
-```text
-personalized-email-generator-n8n/
-│
-├── README.md
-├── workflow-public.json
-│
-├── screenshots/
-│   ├── workflow-overview.png
-│   └── sample-output.png
-│
-├── docs/
-│   └── architecture.png
-│
-└── prompts/
-    └── email-prompt.txt
-```
 
 
 
