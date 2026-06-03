@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is an AI-powered personalized outreach email generator built using n8n, OpenRouter/OpenAI, and LinkedIn profile data. The workflow automates the process of researching a prospect and generating a customized cold email tailored to their professional background, experience, and interests.
+This project is an AI-powered personalized outreach email generator built using n8n, OpenRouter/OpenAI & LinkedIn profile data. The workflow automates the process of researching a prospect and generating a customized cold email tailored to their professional background, experience, and interests.
 
 The goal of the project is to reduce the time spent on manual prospect research while improving the quality and personalization of outreach emails.
 
@@ -10,7 +10,7 @@ The goal of the project is to reduce the time spent on manual prospect research 
 
 ## Problem Statement
 
-Writing personalized cold emails at scale is a time-consuming process. Sales teams, recruiters, founders, and business development professionals often spend significant effort researching prospects before drafting outreach messages.
+Writing personalized cold emails at scale is a time-consuming process. Sales teams, recruiters, founders & business development professionals often spend significant effort researching prospects before drafting outreach messages.
 
 This workflow automates that process by:
 
@@ -87,7 +87,7 @@ LinkedIn Profile URL
 
 ---
 
-## How It Works
+## How It Works ?
 
 ### Step 1: Input
 
@@ -236,41 +236,6 @@ personalized-email-generator-n8n/
     └── email-prompt.txt
 ```
 
----
 
-## Getting Started
 
-### Prerequisites
-
-* n8n
-* Apify Account
-* OpenRouter Account or OpenAI Account
-
----
-
-## Key Learnings
-
-Through this project, I gained practical experience in:
-
-* Workflow automation
-* API integrations
-* Prompt engineering
-* AI application development
-* Data extraction pipelines
-* Process automation using n8n
-* Building scalable outreach systems
-
----
-
-## Author
-
-Aryan K
-
-Data Analytics | AI Automation | Workflow Automation | Business Intelligence
-
----
-
-## License
-
-MIT License
 
