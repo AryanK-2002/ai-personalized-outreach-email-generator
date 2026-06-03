@@ -1,0 +1,360 @@
+{
+  "name": "Email Outreach workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aa8beb71-850d-49c5-9b62-e377853c2176",
+              "name": "full_name",
+              "value": "={{ $json.full_name || $json.fullName || $json.name || $json.profileName }}",
+              "type": "string"
+            },
+            {
+              "id": "c27625f2-928c-4378-8fe2-c6156dc42cd0",
+              "name": "first_name",
+              "value": "={{ $json.first_name || $json.firstName || ($json.full_name || $json.fullName || $json.name || '').split(' ')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "1c609fc1-767a-4e9f-bee3-d651f0974f27",
+              "name": "headline",
+              "value": "={{ $json.headline || $json.title || $json.occupation || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "ee86f605-1eda-464b-aeaa-c918f3cb14cd",
+              "name": "company_name",
+              "value": "={{ $json.company_name || $json.companyName || $json.currentCompany || $json.company || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "42a762be-c9e8-456a-9f58-2fab8ca19d60",
+              "name": "experiences_text",
+              "value": "={{ JSON.stringify($json.experiences || $json.experience || $json.positions || $json.workExperience || [], null, 2) }}",
+              "type": "string"
+            },
+            {
+              "id": "96a096ba-022f-4096-9536-0c1fb7bbb475",
+              "name": "current_title",
+              "value": "={{ $json.title || $json.current_title || $json.position || $json.profile?.title || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "0b73cc20-7435-4afc-8675-2b93a1c512a0",
+              "name": "summary",
+              "value": "={{ $json.summary || $json.about || $json.bio || $json.profile?.summary || $json.profile?.about || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "fab471fa-8559-4425-bef0-888113c2fc95",
+      "name": "Clean Profile Data"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4c05da5a-b60f-43c2-83cc-47c4e28b32ee",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bfe7bbd1-6c2e-453e-b6fb-adfe5d8821d1",
+              "name": "linkedin_url",
+              "value": "https://www.linkedin.com/in/vineetasingh/",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "43cb6fed-dd33-4923-ad41-0b3b0210c138",
+      "name": "LinkedIn URL Input"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actors/alwaysprimedev~linkedin-profile-scraper/runs?token=YOUR_APIFY_TOKEN",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"profileUrls\": [\n    \"{{ $json.linkedin_url }}\"\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "752ff546-beea-4197-82e4-b91171542aa3",
+      "name": "Start LinkedIn Scraper"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "87e33c1a-2166-46e1-aada-6ecc3e1a7bb0",
+      "name": "Wait for Scraper Results",
+      "webhookId": "29d1c423-c1ee-4d28-8e2b-93716d495b28"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items?clean=true&token=YOUR_APIFY_TOKEN",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        0
+      ],
+      "id": "50df03de-5b49-4183-b90b-624812c825d6",
+      "name": "Fetch Scraped Profile",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35166a6c-204c-4437-aa7a-7c2042237848",
+              "name": "prompt",
+              "value": "=You are an expert SDR who writes warm, human, personalized outbound emails.\n\nAnalyze this LinkedIn profile:\n\nName:\n{{ $json.full_name }}\n\nHeadline:\n{{ $json.headline }}\n\nSummary:\n{{ $json.summary }}\n\nExperience:\n{{ $json.experiences }}\n\nGenerate three different versions of the same personalized outreach email.\n\nThe three versions should have different tones:\n\n1. Professional and direct\n2. Friendly and conversational\n3. Warm and consultative\n\nImportant rules:\n- Keep the writing simple, natural, and human\n- Make it sound like Aryan personally wrote it after reading the profile\n- Do not make it sound AI-generated\n- Do not overpraise\n- Do not use dramatic words like \"remarkable,\" \"inspiring,\" \"truly resonates,\" \"groundbreaking,\" or \"world-changing\"\n- Do not use generic lines like \"I hope this message finds you well\"\n- Do not use square bracket placeholders\n- Do not invent Aryan's company, role, product, or background\n- Keep Aryan generic, but make the recipient personalization specific\n- Use only the recipient's first name in the greeting\n- Do not use the recipient's last name in the greeting\n- Each email should be medium-length, not too short\n- Each email should be 1 to 2 well-written paragraphs\n- Each email should be around 600 to 7000 words\n- Keep the words simple and natural, like day-to-day professional writing\n- Keep the same tone: warm, professional, and human\n- Each paragraph should be easy to read, with no long sentences\n- Include at least two specific observations from the profile\n- Connect those observations to why Aryan is reaching out\n- End with a soft, professional call-to-action\n- End every email exactly with:\n\nWarm regards,\n<strong>Aryan</strong>\n\nFormatting rules:\n- Output must be HTML-friendly\n- Use <strong> only for the recipient name in the greeting and for Aryan's name at the end\n- Add <hr> between Version 1 and Version 2\n- Add <hr> between Version 2 and Version 3\n- Do not add <hr> after Version 3\n- Do not use markdown headings like ### or ##\n- Use the actual first name from the profile in every greeting\n- Never write FirstName\n- Never write [Company Name]\n- Never use square bracket placeholders\n- If company name is missing, do not mention a company\n- Mention at least two real details from the profile\n- Use the headline, summary, company, or experience only if they are available\n- Do not invent details\n- Make every email clearly personalized to this person’s LinkedIn profile\nPersonalization priority:\n1. First use the person's current role and company\n2. Then use their work experience\n3. Then use their summary/about section\n4. Only use the headline if no better details are available\n\nDo not personalize only from the headline unless no other data exists.\nMention the company name if available.\nMention one real role, company, project, or career detail from the experience section.\nDo not invent projects, apps, revolutions, achievements, or impact if they are not present in the profile data.\nEmail length and detail rules:\n- Each email version should be medium length, not short\n- Each email should be around 600 to 700 words\n- Each email should have 2 well-developed paragraphs\n- Each paragraph should have 3 to 5 sentences\n- Do not write very short emails\n- Do not write 1-line or 2-line paragraphs\n- Add enough context so the message feels thoughtful and personalized\n- Keep the words simple, natural, and professional\n- Keep the tone human, warm, and easy to read\nFormatting rules:\n- Output must be HTML-friendly\n- Use <strong> for the recipient first name in the greeting\n- Use <strong> for the company name whenever it appears in the email body\n- Use <strong> for Aryan's name at the end\n- Do not use markdown headings like ### or ##\n\n\nUse this exact format:\n\nVersion 1 - Professional and Direct\nSubject: Write a real subject line here\nEmail:\nDear <strong>{{$json.first_name}}</strong>,,\n\nWrite paragraph 1 here.\n\nWrite paragraph 2 here.\n\nWarm regards,\n<strong>Aryan</strong>\n\n<hr>\n\nVersion 2 - Friendly and Conversational\nSubject: Write a real subject line here\nEmail:\nHi <strong>{{$json.first_name}}</strong>,,\n\nWrite paragraph 1 here.\n\nWrite paragraph 2 here.\n\nWarm regards,\n<strong>Aryan</strong>\n\n<hr>\n\nVersion 3 - Warm and Consultative\nSubject: Write a real subject line here\nEmail:\nHello <strong>{{$json.first_name}}</strong>,,\n\nWrite paragraph 1 here.\n\nWrite paragraph 2 here.\n\nWarm regards,\n<strong>Aryan</strong>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "aa4588f3-f6e1-4143-a244-dfd7b2019ff9",
+      "name": "Build Outreach Prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Authorization\": \"Bearer YOUR_OPENROUTER_API_KEY\",\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"openai/gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.prompt) }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "ea5340a9-9d16-418f-9f35-c891918412ab",
+      "name": "Generate outreach with AI"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8d0a5262-661e-4336-a0be-02840d1a48ac",
+              "name": "generated_email",
+              "value": "={{ $json.choices[0].message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1776,
+        0
+      ],
+      "id": "9a5660ad-bab0-4d55-af0d-341d8a5c9eae",
+      "name": "Extract AI Response"
+    },
+    {
+      "parameters": {
+        "sendTo": "khaparde70aryan@gmail.com",
+        "subject": "=Outreach email for {{ $('Clean Profile Data').first().json.full_name }}",
+        "message": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #222;\">\n  <p><em>Hey Aryan,</em></p>\n\n  <p><em>Here are the 3 personalized outreach email versions:</em></p>\n\n  <div style=\"white-space: pre-wrap;\">{{ $json.generated_email }}</div>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        0
+      ],
+      "id": "46cb5e24-d9e4-4e32-a558-e5a797eca49a",
+      "name": "Send Email to Inbox",
+      "webhookId": "39fe9b8e-faea-451d-bcad-af46a11a5b68",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h2GGAsUJdwxd7YRH",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Clean Profile Data": {
+      "main": [
+        [
+          {
+            "node": "Build Outreach Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn URL Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn URL Input": {
+      "main": [
+        [
+          {
+            "node": "Start LinkedIn Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start LinkedIn Scraper": {
+      "main": [
+        [
+          {
+            "node": "Wait for Scraper Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Scraper Results": {
+      "main": [
+        [
+          {
+            "node": "Fetch Scraped Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Scraped Profile": {
+      "main": [
+        [
+          {
+            "node": "Clean Profile Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Outreach Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate outreach with AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate outreach with AI": {
+      "main": [
+        [
+          {
+            "node": "Extract AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract AI Response": {
+      "main": [
+        [
+          {
+            "node": "Send Email to Inbox",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f201900b-ad09-40be-8434-a2f4e1f992f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "379d6847c5378b2d33f54be2683516b5e436bbce7fcd2f8e4a173ba5b6bc45c5"
+  },
+  "id": "nzSDLrbflO7xLo6y",
+  "tags": []
+}
